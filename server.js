@@ -14,7 +14,7 @@ app.get("/favorite", handelFavorite)
 //Error handler for 500 
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).send('Internal Server Error');
+    res.status(500).send('Sorry, something went wrong');
 });
 
 // Error handler for 404 - Not Found

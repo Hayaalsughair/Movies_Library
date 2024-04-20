@@ -19,7 +19,7 @@
     - Home Routing. 
     - Favorite Routing .
 2. Error Handling: The app handel two type of error 
-    - 500: "Internal Server Error".
+    - 500:Internal Server Error "Sorry, something went wrong".
     - 404: "Not Found".
 3. Server SetUp.
 4. Data Handling.
