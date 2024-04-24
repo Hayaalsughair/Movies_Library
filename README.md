@@ -1,11 +1,41 @@
-> # Movies_Library - V.0.0 📽️
+> # Movies_Library - V.0.1 📽️
+  **Author Name**: Haya Al-Sughair 
+## Web Request Response Cycle (WRRC)
+![wrrc2_imge](wrrc2.jpg)
+## Overview 
+This project is an Express.js API for accessing movie data. It lets users fetch trending movies and search for movies by title. The app connects to TMDB (The Movie Database) API to get movie information.
 
-**Author Name**: Haya Al-Sughair 
+## Getting Started
+- Using Nodejs (RunTime enviroment )
+- Install the cors Package (`$ npm install cors`) Using By:
+    - `var cors = require('cors')`
+    - `app.use(cors())`
+- Install nodemon Package (`$npm i nodemon`)
+    - `npm i -g nodemon`.
+    - If you face error in access use this : `sudo npm i -g nodemon`.
+    - `nodemon File-Name `.
 
-## WRRC
+## New Project Features   
+- Trending Movies Endpoint:
+
+    Endpoint: `/trending`.
+
+    Description: Retrieves a list of trending movies from the TMDB API and returns the data as JSON.
+- Search Movies Endpoint:
+
+     Endpoint: `/search`. 
+
+    Description: Allows users to search for movies based on their titles. Users can provide a query parameter (movieName) to search for specific movies. The endpoint queries the TMDB API and returns the search results as JSON.
+
+
+
+
+> # Movies_Library - V.0.0 
+
+## Web Request Response Cycle (WRRC)
 ![wrrc_imge](wrrc.jpg)
 ## Overview
-#### This application serves as a basic framework for serving movie data and handling simple HTTP requests.
+This application serves as a basic framework for serving movie data and handling simple HTTP requests.
 ## Getting Started
 - Node JS (Runtime enviroment) 
 - Building a server : 
