@@ -10,33 +10,22 @@ const apiKey = process.env.API_KEY;
 app.use(cors())
 
 // routs
-// app.get("/", handelHomePage);
+app.get("/", handelHomePage);
 app.get("/favorite", handelFavorite);
 app.get("/trending", handelTrending);
 app.get("/search", handelSearch);
-
-
+//Tow rout 
+app.get("/upcoming", handelUpcoming)
+app.get("/nowPlaying", handelNowPlaying)
 
 //constructor
-function TrendingMovie(id, title, release_data, poster_path, overview) {
+function Movie(id, title, release_data, poster_path, overview) {
     this.id = id;
     this.title = title;
     this.release_data = release_data;
     this.poster_path = poster_path;
     this.overview = overview;
 }
-//lab #11
-
-// function Movie(title, poster_path, overview ) {
-//     this.title = title;
-//     this.poster_path = poster_path;
-//     this.overview = overview;
-// }
-// function handelHomePage(req, res) {
-//   let newMovie = new Movie(homeMovie.title, homeMovie.poster_path, homeMovie.overview);
-//     res.json(newMovie);
-// }
-
 
 //Fuctions
 function handelTrending(req, res) {
@@ -47,7 +36,7 @@ function handelTrending(req, res) {
         .then(result => {
             console.log(result.data.results);
             let trending = result.data.results.map(trend => {
-                return new TrendingMovie(
+                return new Movie(
                     trend.id,
                     trend.title,
                     trend.release_data,
@@ -66,7 +55,6 @@ function handelTrending(req, res) {
 function handelSearch(req, res) {
     console.log(req.query);
     let movieName = req.query.movieName;
-    // const encodedMovieName = encodeURIComponent(movieName); // Properly encode movie name
     const url = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&language=en-US&query=${movieName}&page=1`; 
     axios.get(url)
          .then(result => {
@@ -79,13 +67,55 @@ function handelSearch(req, res) {
         });
 
     // res.send("movie name ")
-        }
+}
+
+function handelUpcoming(req, res) {
+   const url = `https://api.themoviedb.org/3/movie/upcoming?api_key=${apiKey}&language=en-US&query=The&page=1`
+    //Axios 
+    axios.get(url)
+        .then(result => {
+            console.log(result.data.results);
+            let upComing = result.data.results.map(coming => {
+                return new Movie(
+                    coming.id,
+                    coming.title,
+                    coming.release_data,
+                    coming.poster_path,
+                    coming.overview
+                );
+            });
+            res.json(upComing);
+        })
+        .catch(error => {
+            console.error( error);
+            res.status(500).json('Internal Server Error');
+        });
+
+}
+
+function handelNowPlaying(req, res) {
+    const url = `https://api.themoviedb.org/3/movie/now_playing?api_key=${apiKey}&language=en-US&query=The&page=1`
+    axios.get(url)
+    .then(result => {
+    //    console.log(result.data.results);
+       res.json(result.data.results);
+     })
+     .catch(error => {
+       console.error( error);
+       res.status(500).json('Internal Server Error');
+   });
+}
+
+function handelHomePage(req, res) {
+    let newMovie = new Movie(homeMovie.title, homeMovie.poster_path, homeMovie.overview);
+      res.json(newMovie);
+  }
 
 function handelFavorite(req, res) {
     res.send("Welcome to Favorite Page ❤️")   
 }
 
-//3. The server listener 
+//The server listener 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
