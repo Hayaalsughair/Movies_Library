@@ -23,17 +23,24 @@ const app = express();
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
-
+/* ========================= lab 11 ============================= */
 // routs
 app.get("/", handelHomePage);
 app.get("/favorite", handelFavorite);
+
+
+/* ========================= lab 12 ============================= */
 app.get("/trending", handelTrending);
 app.get("/search", handelSearch);
 
+
+/* ========================= lab 13 ============================= */
 //requset from client => server 
 app.post("/addMovie", handleAdd)
 app.get("/getMovie", handleGet)
 
+
+/* ========================= lab 12 ============================= */
 //Tow more routs
 app.get("/upcoming", handelUpcoming)
 app.get("/nowPlaying", handelNowPlaying)
@@ -47,11 +54,21 @@ function Movie(id, title, release_data, poster_path, overview) {
     this.overview = overview;
 }
 
+/* ========================= lab 11 ============================= */
 //Fuctions
+function handelHomePage(req, res) {
+    let newMovie = new Movie(homeMovie.title, homeMovie.poster_path, homeMovie.overview);
+    res.json(newMovie);
+}
 
+function handelFavorite(req, res) {
+    res.send("Welcome to Favorite Page ❤️")
+}
+
+/* ========================= lab 12 ============================= */
 function handelTrending(req, res) {
     // To get data from 3rd party 
-    const url = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&language=en-US&query=The&page=2`;
+    const url = `https://api.themoviedb.org/3/trending/all/week?api_key=${apiKey}&language=en-US`;
     //Axios 
     axios.get(url)
         .then(result => {
@@ -73,7 +90,6 @@ function handelTrending(req, res) {
         });
 }
 
-
 function handelSearch(req, res) {
     console.log(req.query);
     let movieName = req.query.movieName;
@@ -90,7 +106,6 @@ function handelSearch(req, res) {
 
     // res.send("movie name ")
 }
-
 
 function handelUpcoming(req, res) {
     const url = `https://api.themoviedb.org/3/movie/upcoming?api_key=${apiKey}&language=en-US&query=The&page=1`
@@ -130,15 +145,7 @@ function handelNowPlaying(req, res) {
         });
 }
 
-function handelHomePage(req, res) {
-    let newMovie = new Movie(homeMovie.title, homeMovie.poster_path, homeMovie.overview);
-    res.json(newMovie);
-}
-
-function handelFavorite(req, res) {
-    res.send("Welcome to Favorite Page ❤️")
-}
-
+/* ========================= lab 13 ============================= */
 function handleAdd(req, res) {
     // console.log(req.body);
     const { id, title, release_date, poster_path, overview } = req.body;
@@ -173,6 +180,7 @@ client.connect().then(() => {
         console.log(`Example app listening on port ${PORT}`)
     })
 })
+
 //Error handler for 500 
 app.use((err, req, res, next) => {
     console.error(err.stack);
