@@ -18,11 +18,11 @@ const client = new Client(url)
 //const pg = require('pg');
 // const client = new Client(url)
 
-
 const app = express();
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
+
 
 // routs
 app.get("/", handelHomePage);
