@@ -1,4 +1,4 @@
-//Lab 13
+//Lab 14
 
 require('dotenv').config();
 const express = require('express');
@@ -34,6 +34,11 @@ app.get("/search", handelSearch);
 app.post("/addMovie", handleAdd)
 app.get("/getMovie", handleGet)
 
+// New CRUD 
+app.put("/UPDATE/:id", handleUpdate); //PUT => Update 
+app.put("/DELETE/:id", handleDelete); //In Query 
+app.get("/getMovie/:id", handleGetMovieId);
+
 //Tow more routs
 app.get("/upcoming", handelUpcoming)
 app.get("/nowPlaying", handelNowPlaying)
@@ -48,6 +53,45 @@ function Movie(id, title, release_data, poster_path, overview) {
 }
 
 //Fuctions
+function handleUpdate(req, res) {
+    /* id, title, release_date, poster_path, overview*/
+    let id = req.params.id;
+    let { title, release_date, poster_path, overview } = req.body;
+    let sql = `UPDATE movies SET title=$2, release_date=$3, poster_path=$4, overview=$5  WHERE id=$1 RETURNING *;`
+    let value = [ id, title, release_date, poster_path, overview]
+
+    client.query(sql, value).then((result) => {
+        return res.json(result.rows[0]);
+    })
+    .catch((error) => {
+        errorHandler(error, req, res);
+    });
+}
+
+function handleDelete(req, res){
+    const {id} = req.params;
+    let sql = `DELETE FROM movies WHERE id=$1;`
+    let value = [id];
+    client.query(sql, value).then((result) => {
+        // console.log(result);
+        return res.status(204).json(result.rows[0]);
+    })
+    .catch((error) => {
+        errorHandler(error, req, res);
+    });
+}
+
+function handleGetMovieId(req, res){
+    const {id} = req.params;
+    let sql = `SELECT * FROM movies WHERE id=$1;`
+    let value = [id];
+    client.query(sql, value).then((result) => {
+        return res.json(result.rows);
+    })
+    .catch((error) => {
+        errorHandler(error, req, res);
+    }); 
+}
 
 function handelTrending(req, res) {
     // To get data from 3rd party 

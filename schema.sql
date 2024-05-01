@@ -1,4 +1,4 @@
-DROP TABLE table_name;
+-- DROP TABLE table_name;
 
 CREATE TABLE movies (
     id SERIAL PRIMARY KEY,
