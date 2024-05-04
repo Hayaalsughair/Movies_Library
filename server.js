@@ -39,6 +39,8 @@ app.get("/getMovies", handleGet)
 // app.put("/UPDATE/:id", handleUpdate); //PUT => Update 
 // app.delete("/DELETE/:id", handleDelete); //In Query 
 // app.get("/getMovie/:id", handleGetMovieId);
+
+
 app.put('/updateMovie/:id', updateMovieHandler);//lab14
 app.delete('/deleteMovie/:id', deleteMovieHandler);//lab14
 app.get('/getMovie/:id', getMovieHandler);//lab14
@@ -91,7 +93,7 @@ function getMovieHandler(req,res){
         errorHandler(error, req, res);
     }))
   }
-  
+
 // function handleUpdate(req, res) {
 //     /* id, title, release_date, poster_path, overview*/
 //     let id = req.params.id;
@@ -224,14 +226,14 @@ function handelFavorite(req, res) {
 
 function handleAdd(req, res) {
     // console.log(req.body);
-    const { id, title, release_date, poster_path, overview } = req.body;
+    const { original_title, release_date, poster_path, overview, comment } = req.body;
     // let sql = `INSERT INTO movietable (id, title, release_date, poster_path, overview)
     //          VALUES ($1, $2, $3, $4, $5) RETURNING*;`
 
-             let sql = `INSERT INTO movietable(original_title, release_date, poster_path, overview, comment )
-             VALUES ($1, $2, $3, $4, $5) RETURNING *;`
+    let sql = `INSERT INTO movietable(original_title, release_date, poster_path, overview, comment )
+    VALUES ($1, $2, $3, $4, $5) RETURNING *;`
 
-    let value = [id, title, release_date, poster_path, overview]
+    const value = [original_title, release_date, poster_path, overview, comment] 
     client.query(sql, value)
         .then((result) => {
             console.log(result.rows);
