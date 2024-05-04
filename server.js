@@ -36,9 +36,12 @@ app.post("/addMovie", handleAdd)
 app.get("/getMovies", handleGet)
 
 // New CRUD 
-app.put("/UPDATE/:id", handleUpdate); //PUT => Update 
-app.put("/DELETE/:id", handleDelete); //In Query 
-app.get("/getMovie/:id", handleGetMovieId);
+// app.put("/UPDATE/:id", handleUpdate); //PUT => Update 
+// app.delete("/DELETE/:id", handleDelete); //In Query 
+// app.get("/getMovie/:id", handleGetMovieId);
+app.put('/updateMovie/:id', updateMovieHandler);//lab14
+app.delete('/deleteMovie/:id', deleteMovieHandler);//lab14
+app.get('/getMovie/:id', getMovieHandler);//lab14
 
 //Tow more routs
 app.get("/upcoming", handelUpcoming)
@@ -54,45 +57,80 @@ function Movie(id, title, release_data, poster_path, overview) {
 }
 
 //Fuctions
-function handleUpdate(req, res) {
-    /* id, title, release_date, poster_path, overview*/
-    let id = req.params.id;
-    let { title, release_date, poster_path, overview } = req.body;
-    let sql = `UPDATE movies SET title=$2, release_date=$3, poster_path=$4, overview=$5  WHERE id=$1 RETURNING *;`
-    let value = [ id, title, release_date, poster_path, overview]
-
-    client.query(sql, value).then((result) => {
-        return res.json(result.rows[0]);
-    })
-    .catch((error) => {
+function updateMovieHandler(req,res){
+    const id = req.params.id
+    const {original_title, release_date, poster_path, overview, comment }= req.body 
+    const  sql = `UPDATE movietable SET original_title=$1, release_date=$2, poster_path=$3, overview=$4, comment=$5 WHERE id= ${id} RETURNING *;`
+    const values = [original_title,release_date,poster_path,overview,comment] 
+    client.query(sql, values).then((reuslt)=>{
+        console.log(reuslt.rows)
+        res.status(200).json(reuslt.rows)
+    }).catch(((error) =>{
         errorHandler(error, req, res);
-    });
+    }))
 }
-
-function handleDelete(req, res){
-    const {id} = req.params;
-    let sql = `DELETE FROM movies WHERE id=$1;`
-    let value = [id];
-    client.query(sql, value).then((result) => {
-        // console.log(result);
-        return res.status(204).json(result.rows[0]);
-    })
-    .catch((error) => {
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+function deleteMovieHandler(req,res){
+    const id = req.params.id
+    const  sql = `DELETE FROM movietable WHERE id= ${id} RETURNING *;`
+    client.query(sql).then((reuslt)=>{
+        console.log(reuslt.rows)
+        res.status(204).json(reuslt.rows)
+    }).catch(((error) =>{
         errorHandler(error, req, res);
-    });
+    }))
 }
-
-function handleGetMovieId(req, res){
-    const {id} = req.params;
-    let sql = `SELECT * FROM movies WHERE id=$1;`
-    let value = [id];
-    client.query(sql, value).then((result) => {
-        return res.json(result.rows);
-    })
-    .catch((error) => {
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+function getMovieHandler(req,res){
+    const id = req.params.id;
+    const sql=`SELECT * FROM movietable WHERE id = ${id} ;`
+    client.query(sql).then((reuslt)=>{
+        console.log(reuslt.rows)
+        res.status(200).json(reuslt.rows)
+    }).catch(((error) =>{
         errorHandler(error, req, res);
-    }); 
-}
+    }))
+  }
+  
+// function handleUpdate(req, res) {
+//     /* id, title, release_date, poster_path, overview*/
+//     let id = req.params.id;
+//     let { title, release_date, poster_path, overview } = req.body;
+//     let sql = `UPDATE movies SET title=$2, release_date=$3, poster_path=$4, overview=$5  WHERE id=$1 RETURNING *;`
+//     let value = [ id, title, release_date, poster_path, overview]
+
+//     client.query(sql, value).then((result) => {
+//         return res.json(result.rows[0]);
+//     })
+//     .catch((error) => {
+//         errorHandler(error, req, res);
+//     });
+// }
+
+// function handleDelete(req, res){
+//     const {id} = req.params;
+//     let sql = `DELETE FROM movies WHERE id=$1;`
+//     let value = [id];
+//     client.query(sql, value).then((result) => {
+//         // console.log(result);
+//         return res.status(204).json(result.rows[0]);
+//     })
+//     .catch((error) => {
+//         errorHandler(error, req, res);
+//     });
+// }
+
+// function handleGetMovieId(req, res){
+//     const {id} = req.params;
+//     let sql = `SELECT * FROM movies WHERE id=$1;`
+//     let value = [id];
+//     client.query(sql, value).then((result) => {
+//         return res.json(result.rows);
+//     })
+//     .catch((error) => {
+//         errorHandler(error, req, res);
+//     }); 
+// }
 
 function handelTrending(req, res) {
     // To get data from 3rd party 
