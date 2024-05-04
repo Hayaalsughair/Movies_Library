@@ -33,7 +33,7 @@ app.get("/search", handelSearch);
 
 //requset from client => server 
 app.post("/addMovie", handleAdd)
-app.get("/getMovie", handleGet)
+app.get("/getMovies", handleGet)
 
 // New CRUD 
 app.put("/UPDATE/:id", handleUpdate); //PUT => Update 
@@ -201,7 +201,7 @@ function handleAdd(req, res) {
 }
 
 function handleGet(req, res) {
-    let sql = 'SELECT * FROM movies;'
+    let sql = 'SELECT * FROM movietable;'
     //we dont need value caus it null we return it from handelAdd
     client.query(sql)
         .then((result) => {
