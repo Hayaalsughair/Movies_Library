@@ -269,7 +269,7 @@ function handleGet(req, res) {
     client.query(sql)
         .then((result) => {
             return res.status(200).json(result.rows);
-        })
+        }).catch()
 }
 
 
