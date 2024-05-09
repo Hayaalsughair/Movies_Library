@@ -88,7 +88,8 @@ function updateMovieHandler(req,res){
     client.query(sql, values).then((reuslt)=>{
         console.log(reuslt.rows)
         res.status(200).json(reuslt.rows)
-    }).catch(((error) =>{
+    })
+    .catch(((error) =>{
         errorHandler(error, req, res);
     }))
 }
@@ -99,7 +100,8 @@ function deleteMovieHandler(req,res){
     client.query(sql).then((reuslt)=>{
         console.log(reuslt.rows)
         res.status(204).json(reuslt.rows)
-    }).catch(((error) =>{
+    })
+    .catch(((error) =>{
         errorHandler(error, req, res);
     }))
 }
@@ -110,7 +112,8 @@ function getMovieHandler(req,res){
     client.query(sql).then((reuslt)=>{
         console.log(reuslt.rows)
         res.status(200).json(reuslt.rows)
-    }).catch(((error) =>{
+    })
+    .catch(((error) =>{
         errorHandler(error, req, res);
     }))
   }
@@ -260,6 +263,11 @@ function handleAdd(req, res) {
             console.log(result.rows);
             return res.status(201).json(result.rows)
         })
+        .catch(error => {
+            console.error(error);
+            res.status(500).json('Internal Server Error');
+        });
+
 
 }
 
@@ -269,7 +277,12 @@ function handleGet(req, res) {
     client.query(sql)
         .then((result) => {
             return res.status(200).json(result.rows);
-        }).catch()
+        })
+        .catch(error => {
+            console.error(error);
+            res.status(500).json('Internal Server Error');
+        });
+
 }
 
 
@@ -280,6 +293,7 @@ client.connect().then(() => {
         console.log(`Example app listening on port ${PORT}`)
     })
 })
+ .catch()
 //Error handler for 500 
 app.use((err, req, res, next) => {
     console.error(err.stack);
