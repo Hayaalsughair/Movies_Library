@@ -19,11 +19,11 @@ const clientLocal = new Client(urlLocal)
 //const pg = require('pg');
 // const client = new Client(url)
 
-/* ************************************************************************************************** */ 
+/* ************************************** Deplye DataBase************************************************************ */ 
+//require pg
+const pg=require('pg');
+
 //URL Database 
-
-//url of database i want to connect with
-
 const DataBase=process.env.PG_DATABASE;
 const UserName=process.env.PG_USER;
 const Password=process.env.PG_PASSWORD;
@@ -38,8 +38,6 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
-//require pg
-const pg=require('pg');
 
 // routs
 app.get("/", handelHomePage);
@@ -49,7 +47,7 @@ app.get("/search", handelSearch);
 
 //requset from client => server 
 app.post("/addMovie", handleAdd)
-app.get("/getMovie", handleGet)
+app.get("/getMovies", handleGet)
 
 // New CRUD 
 // app.put("/UPDATE/:id", handleUpdate); //PUT => Update 
@@ -79,9 +77,14 @@ function Movie(id, title, release_data, poster_path, overview) {
 //Fuctions
 function updateMovieHandler(req,res){
     const id = req.params.id
-    const {original_title, release_date, poster_path, overview, comment }= req.body 
-    const  sql = `UPDATE movies SET original_title=$1, release_date=$2, poster_path=$3, overview=$4, comment=$5 WHERE id= ${id} RETURNING *;`
-    const values = [original_title,release_date,poster_path,overview,comment] 
+    // const {original_title, release_date, poster_path, overview, comment }= req.body 
+    // const  sql = `UPDATE movies SET original_title=$1, release_date=$2, poster_path=$3, overview=$4, comment=$5 WHERE id= ${id} RETURNING *;`
+    // const values = [original_title,release_date,poster_path,overview,comment] 
+
+    const {title, release_date, poster_path, overview } = req.body;
+    const sql = `UPDATE movies SET title=$2, release_date=$3, poster_path=$4, overview=$5  WHERE id=$1 RETURNING *;`
+    const values = [ id, title, release_date, poster_path, overview]
+
     client.query(sql, values).then((reuslt)=>{
         console.log(reuslt.rows)
         res.status(200).json(reuslt.rows)
@@ -244,14 +247,14 @@ function handelFavorite(req, res) {
 
 function handleAdd(req, res) {
     // console.log(req.body);
-    const { original_title, release_date, poster_path, overview, comment } = req.body;
-    // let sql = `INSERT INTO movies (id, title, release_date, poster_path, overview)
-    //          VALUES ($1, $2, $3, $4, $5) RETURNING*;`
+    const { id, title, release_date, poster_path, overview  } = req.body;
+    let sql = `INSERT INTO movies (id, title, release_date, poster_path, overview)
+             VALUES ($1, $2, $3, $4, $5) RETURNING*;`
 
-    let sql = `INSERT INTO movietable (original_title, release_date, poster_path, overview, comment )
-    VALUES ($1, $2, $3, $4, $5) RETURNING *;`
+    // let sql = `INSERT INTO movietable (original_title, release_date, poster_path, overview, comment )
+    // VALUES ($1, $2, $3, $4, $5) RETURNING *;`
 
-    const value = [original_title, release_date, poster_path, overview, comment] 
+    const value = [id, title, release_date, poster_path, overview] 
     client.query(sql, value)
         .then((result) => {
             console.log(result.rows);
