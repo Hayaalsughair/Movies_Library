@@ -252,7 +252,7 @@ function handleAdd(req, res) {
     // console.log(req.body);
     const { id, title, release_date, poster_path, overview  } = req.body;
     let sql = `INSERT INTO movies (id, title, release_date, poster_path, overview)
-             VALUES ($1, $2, $3, $4, $5) RETURNING*;`
+             VALUES ($1, $2, $3, $4, $5) RETURNING *;`
 
     // let sql = `INSERT INTO movietable (original_title, release_date, poster_path, overview, comment )
     // VALUES ($1, $2, $3, $4, $5) RETURNING *;`
