@@ -1,27 +1,39 @@
 //Lab 14
 
-
-require('dotenv').config();
+//require express
 const express = require('express');
-const bodyParser = require('body-parser')
+const app = express();
+
+//require axios
 const axios = require('axios').default;
+
+//require cors
 const cors = require('cors');
-const PORT = 3000;
+
+//set port 
+const port =process.env.PORT || 3001;
+
+//require body-parser
+const bodyParser = require('body-parser');
+
 const homeMovie = require('./move_data/data.json');
+//Use cors
+app.use(cors())
 
+//require env 
+require('dotenv').config();
+
+//require API KEY  
 const apiKey = process.env.API_KEY;
-const urlLocal = process.env.URL
 
-//postgres
-const { Client } = require('pg')
-const clientLocal = new Client(urlLocal)
-//or 
-//const pg = require('pg');
-// const client = new Client(url)
+//Use body parser
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
 
 /* ************************************** Deplye DataBase************************************************************ */ 
 //require pg
-const pg=require('pg');
+const pg = require( 'pg');
+// const { Client } = require('pg')
 
 //URL Database 
 const DataBase=process.env.PG_DATABASE;
@@ -30,13 +42,9 @@ const Password=process.env.PG_PASSWORD;
 const Host=process.env.PG_HOST;
 const Port=process.env.PG_PORT;
 const url =`postgres://${UserName}:${Password}@${Host}.oregon-postgres.render.com/${DataBase}?ssl=true`;
-const client=new pg.Client(url);
+const client = new pg.Client(url);
 
 /* ************************************************************************************************* */ 
-const app = express();
-app.use(cors())
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: false }))
 
 
 // routs
@@ -88,7 +96,8 @@ function updateMovieHandler(req,res){
     client.query(sql, values).then((reuslt)=>{
         console.log(reuslt.rows)
         res.status(200).json(reuslt.rows)
-    }).catch(((error) =>{
+    })
+    .catch(((error) =>{
         errorHandler(error, req, res);
     }))
 }
@@ -99,7 +108,8 @@ function deleteMovieHandler(req,res){
     client.query(sql).then((reuslt)=>{
         console.log(reuslt.rows)
         res.status(204).json(reuslt.rows)
-    }).catch(((error) =>{
+    })
+    .catch(((error) =>{
         errorHandler(error, req, res);
     }))
 }
@@ -110,7 +120,8 @@ function getMovieHandler(req,res){
     client.query(sql).then((reuslt)=>{
         console.log(reuslt.rows)
         res.status(200).json(reuslt.rows)
-    }).catch(((error) =>{
+    })
+    .catch(((error) =>{
         errorHandler(error, req, res);
     }))
   }
@@ -245,23 +256,47 @@ function handelFavorite(req, res) {
     res.send("Welcome to Favorite Page ❤️")
 }
 
+// function handleAdd(req, res) {
+//     console.log(req.body);
+//     const {id,title, release_date, poster_path, overview  } = req.body;
+//     let sql = `INSERT INTO movies (id, title, release_date, poster_path, overview)
+//              VALUES ($1, $2, $3, $4, $5) RETURNING *;`
+
+//     // let sql = `INSERT INTO movietable (original_title, release_date, poster_path, overview, comment )
+//     // VALUES ($1, $2, $3, $4, $5) RETURNING *;`
+
+//     const value = [id, title, release_date, poster_path, overview] 
+//     client.query(sql, value)
+//         .then((result) => {
+//             console.log(result.rows);
+//             return res.status(201).json(result.rows)
+//         })
+//         .catch(error => {
+//             console.error(error);
+//             res.status(500).json('Internal Server Error');
+//         });
+// }
+
 function handleAdd(req, res) {
-    // console.log(req.body);
-    const { id, title, release_date, poster_path, overview  } = req.body;
+    console.log(req.body);
+    const {id, title, release_date, poster_path, overview } = req.body;
+
     let sql = `INSERT INTO movies (id, title, release_date, poster_path, overview)
-             VALUES ($1, $2, $3, $4, $5) RETURNING*;`
+             VALUES ($1, $2, $3, $4, $5) RETURNING *;`
 
-    // let sql = `INSERT INTO movietable (original_title, release_date, poster_path, overview, comment )
-    // VALUES ($1, $2, $3, $4, $5) RETURNING *;`
-
-    const value = [id, title, release_date, poster_path, overview] 
-    client.query(sql, value)
+    const values = [id, title, release_date, poster_path, overview];
+    
+    client.query(sql, values)
         .then((result) => {
             console.log(result.rows);
             return res.status(201).json(result.rows)
         })
-
+        .catch(error => {
+            console.error(error);
+            res.status(500).json('Internal Server Error');
+        });
 }
+
 
 function handleGet(req, res) {
     let sql = 'SELECT * FROM movies;'
@@ -269,17 +304,24 @@ function handleGet(req, res) {
     client.query(sql)
         .then((result) => {
             return res.status(200).json(result.rows);
-        }).catch()
+        })
+        .catch(error => {
+            console.error(error);
+            res.status(500).json('Internal Server Error');
+        });
+
 }
 
 
 //start listen when db connect 
 client.connect().then(() => {
     // the server always listen but i want it start listen when db connect 
-    app.listen(PORT, () => {
-        console.log(`Example app listening on port ${PORT}`)
+    app.listen(port, () => {
+        console.log(`Example app listening on port ${port}`)
     })
 })
+ .catch()
+ 
 //Error handler for 500 
 app.use((err, req, res, next) => {
     console.error(err.stack);
