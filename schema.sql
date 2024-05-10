@@ -2,7 +2,7 @@
 DROP TABLE IF EXISTS movies;
 
 CREATE TABLE movies (
-    id SERIAL PRIMARY KEY NOT NULL,
+    id SERIAL PRIMARY KEY,
     title VARCHAR(255),
     release_date VARCHAR(255),
     poster_path VARCHAR(255),
