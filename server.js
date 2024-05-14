@@ -28,7 +28,6 @@ const password=process.env.PG_PASSWORD;
 const Host=process.env.PG_HOST;
 const PORT=process.env.PG_PORT;
 const {Client}= require('pg');
-// const dbURL = `postgres://${UserName}:${password}@${Host}:${PORT}/${DataBase}`;
 const dbURL =`postgresql://${UserName}:${password}@${Host}.oregon-postgres.render.com/${DataBase}?ssl=true`;
 
 const client = new Client(dbURL);
@@ -59,7 +58,11 @@ function Movie(id, title, release_data, poster_path, overview) {
     this.poster_path = poster_path;
     this.overview = overview;
 }
-
+function HomeMovie(title, poster_path, overview) {
+    this.title = title;
+    this.poster_path = poster_path;
+    this.overview = overview;
+}
 //Fuctions
 //CRUD function
 function updateMovieHandler(req,res){
@@ -194,7 +197,7 @@ function handelHomePage(req, res) {
     // res.json(newMovie);
     try {
 
-        let oneMovie = new Movie(homeMovie.title, homeMovie.poster_path, homeMovie.overview);
+        let oneMovie = new HomeMovie(homeMovie.title, homeMovie.poster_path, homeMovie.overview);
         res.send(oneMovie);
 
     }
@@ -208,13 +211,13 @@ function handelFavorite(req, res) {
 }
 
 function handleAdd(req, res) {
-    // console.log(req.body);
-    const { id, title, release_date, poster_path, overview } = req.body;
-    let sql = `INSERT INTO movies (id, title, release_date, poster_path, overview)
-             VALUES ($1, $2, $3, $4, $5) RETURNING *;`
+    console.log(req.body);
+    const { id, title, release_date, poster_path, overview, comment } = req.body;
+    let sql = `INSERT INTO movies (id, title, release_date, poster_path, overview, comment)
+             VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;`
 
 
-    let value = [id, title, release_date, poster_path, overview]
+    let value = [id, title, release_date, poster_path, overview, comment]
     client.query(sql, value)
         .then((result) => {
             console.log(result.rows);
@@ -240,6 +243,7 @@ function handleGet(req, res) {
 //         console.log(`Example app listening on port ${port}`)
 //     })
 // })
+
 client.connect().then(()=>{
     app.listen(port, () => {
     console.log(`Iam listen for ${port}`)
